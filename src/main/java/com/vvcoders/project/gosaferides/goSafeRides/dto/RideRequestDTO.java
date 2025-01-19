@@ -1,7 +1,11 @@
 package com.vvcoders.project.gosaferides.goSafeRides.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.PaymentMethod;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.RideRequestStatus;
+import com.vvcoders.project.gosaferides.goSafeRides.utils.PointDeserializer;
+import com.vvcoders.project.gosaferides.goSafeRides.utils.PointSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,8 +20,12 @@ public class RideRequestDTO {
 
     private Long id;
 
+    @JsonSerialize(using = PointSerializer.class)
+    @JsonDeserialize(using = PointDeserializer.class)
     private Point pickupLocation;
 
+    @JsonSerialize(using = PointSerializer.class)
+    @JsonDeserialize(using = PointDeserializer.class)
     private Point dropOffLocation;
 
     private LocalDateTime requestedTime;
@@ -28,4 +36,16 @@ public class RideRequestDTO {
 
     private RideRequestStatus rideRequestStatus;
 
+    @Override
+    public String toString() {
+        return "RideRequestDTO{" +
+                "id=" + id +
+                ", pickupLocation=" + pickupLocation +
+                ", dropOffLocation=" + dropOffLocation +
+                ", requestedTime=" + requestedTime +
+                ", rider=" + rider +
+                ", paymentMethod=" + paymentMethod +
+                ", rideRequestStatus=" + rideRequestStatus +
+                '}';
+    }
 }

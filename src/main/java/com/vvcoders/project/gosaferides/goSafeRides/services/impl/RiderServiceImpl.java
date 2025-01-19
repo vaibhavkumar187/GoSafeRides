@@ -1,43 +1,49 @@
 package com.vvcoders.project.gosaferides.goSafeRides.services.impl;
 
-import com.vvcoders.project.gosaferides.goSafeRides.dto.DriverDTO;
-import com.vvcoders.project.gosaferides.goSafeRides.dto.RideRequestDTO;
-import com.vvcoders.project.gosaferides.goSafeRides.entities.Ride;
-import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.RideStatus;
-import com.vvcoders.project.gosaferides.goSafeRides.services.RideService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+
+import com.vvcoders.project.gosaferides.goSafeRides.dto.*;
+import com.vvcoders.project.gosaferides.goSafeRides.entities.RideRequest;
+import com.vvcoders.project.gosaferides.goSafeRides.services.RiderService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class RiderServiceImpl implements RideService {
+@RequiredArgsConstructor
+@Slf4j
+public class RiderServiceImpl implements RiderService {
+
+    private final ModelMapper modelMapper;
+
     @Override
-    public Ride getRideById(Long rideId) {
+    public RideRequestDTO requestRide(RideRequestDTO rideRequestDTO) {
+
+        RideRequest rideRequest = modelMapper.map(rideRequestDTO, RideRequest.class);
+
+        System.out.println(rideRequest);
+
+        return null;
+    }
+    @Override
+    public RideDTO cancelRide(Long rideId) {
         return null;
     }
 
     @Override
-    public void matchWithDrivers(RideRequestDTO rideRequestDTO) {
-
-    }
-
-    @Override
-    public Ride createNewRide(RideRequestDTO rideRequestDTO, DriverDTO driverDTO) {
+    public DriverDTO rateDriver(Long rideId, Integer rating) {
         return null;
     }
 
     @Override
-    public Ride updateRideStatus(Long rideId, RideStatus rideStatus) {
+    public RiderDTO getMyProfile() {
         return null;
     }
 
     @Override
-    public Page<Ride> getAllRidesOfRider(Long riderId, PageRequest pageRequest) {
-        return null;
-    }
-
-    @Override
-    public Page<Ride> getAllRidesOfDriver(Long riderId, PageRequest pageRequest) {
-        return null;
+    public List<RideDTO> getAllMyRides() {
+        return List.of();
     }
 }

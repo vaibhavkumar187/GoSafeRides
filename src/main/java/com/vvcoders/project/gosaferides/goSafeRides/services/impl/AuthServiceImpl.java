@@ -5,13 +5,14 @@ import com.vvcoders.project.gosaferides.goSafeRides.dto.SignUpDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.UserDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.User;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.Role;
+import com.vvcoders.project.gosaferides.goSafeRides.exceptions.RuntimeConflictException;
 import com.vvcoders.project.gosaferides.goSafeRides.repositories.UserRepository;
 import com.vvcoders.project.gosaferides.goSafeRides.services.AuthService;
 import com.vvcoders.project.gosaferides.goSafeRides.services.RiderService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
@@ -29,25 +30,24 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional //Either the complete method will execute or nothing will be added to DB.
     public UserDTO signup(SignUpDTO signUpDTO) {
 
-        userRepository.findByEmail(signUpDTO.getEmail()).orElseThrow(()->
-                new RuntimeException("Cannot signup, User already exists with email"+signUpDTO.getEmail())) ;
+        userRepository.findByEmail(signUpDTO.getEmail()).ifPresent((user)-> {
+            throw new RuntimeConflictException("Cannot signup, User already exists with email "+user.getEmail());
+        });
 
         User mappedUser= modelMapper.map(signUpDTO, User.class);
         mappedUser.setRoles(Set.of(Role.RIDER));
+
         User savedUser = userRepository.save(mappedUser);
-        UserDTO savedUserDTO= modelMapper.map(savedUser, UserDTO.class);
 
         //Created the Rider Profile as user is logging in for the first time
-        riderService.createRider(savedUserDTO);
+        riderService.createRider(savedUser);
 
         //Created the Wallet for the User
 
-
-        return savedUserDTO;
-
-
+        return modelMapper.map(savedUser, UserDTO.class);
     }
 
     @Override

@@ -4,10 +4,12 @@ import com.vvcoders.project.gosaferides.goSafeRides.entities.RideRequest;
 import com.vvcoders.project.gosaferides.goSafeRides.services.DistanceService;
 import com.vvcoders.project.gosaferides.goSafeRides.strategies.RideFareCalculationStrategy;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Primary
 public class RideFareDefaultFareCalculationStrategy implements RideFareCalculationStrategy {
 
     private final DistanceService distanceService;

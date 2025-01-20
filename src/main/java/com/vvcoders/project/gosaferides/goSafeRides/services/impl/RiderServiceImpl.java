@@ -65,9 +65,9 @@ public class RiderServiceImpl implements RiderService {
     }
 
     @Override
-    public RiderDTO createRider(UserDTO userDTO) {
+    public RiderDTO createRider(User user) {
         Rider rider= Rider.builder()
-                .user(modelMapper.map(userDTO, User.class))
+                .user(user)
                 .rating(0.0)
                 .build();
         Rider savedRider= riderRepository.save(rider);

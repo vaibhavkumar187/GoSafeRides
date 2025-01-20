@@ -1,12 +1,14 @@
 package com.vvcoders.project.gosaferides.goSafeRides.entities;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@Builder
 public class Rider {
 
     @Id

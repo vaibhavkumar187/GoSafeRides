@@ -1,9 +1,6 @@
 package com.vvcoders.project.gosaferides.goSafeRides.services;
 
-import com.vvcoders.project.gosaferides.goSafeRides.dto.DriverDTO;
-import com.vvcoders.project.gosaferides.goSafeRides.dto.RideDTO;
-import com.vvcoders.project.gosaferides.goSafeRides.dto.RideRequestDTO;
-import com.vvcoders.project.gosaferides.goSafeRides.dto.RiderDTO;
+import com.vvcoders.project.gosaferides.goSafeRides.dto.*;
 
 import java.util.List;
 
@@ -18,5 +15,7 @@ public interface RiderService {
     RiderDTO getMyProfile();
 
     List<RideDTO> getAllMyRides();
+
+    RiderDTO createRider(UserDTO userDTO);
 
 }

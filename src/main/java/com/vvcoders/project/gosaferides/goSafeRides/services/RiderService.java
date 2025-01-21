@@ -6,8 +6,8 @@ import com.vvcoders.project.gosaferides.goSafeRides.dto.RideRequestDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.RiderDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.Rider;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.User;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 public interface RiderService {
 
@@ -19,7 +19,7 @@ public interface RiderService {
 
     RiderDTO getMyProfile();
 
-    List<RideDTO> getAllMyRides();
+    Page<RideDTO> getAllMyRides(PageRequest pageRequest);
 
     Rider createRider(User user);
 

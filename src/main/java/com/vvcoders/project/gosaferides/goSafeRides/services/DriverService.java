@@ -4,6 +4,8 @@ import com.vvcoders.project.gosaferides.goSafeRides.dto.DriverDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.RideDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.RiderDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.Driver;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -21,8 +23,10 @@ public interface DriverService {
 
     DriverDTO getMyProfile();
 
-    List<RideDTO> getAllMyRides();
+    Page<RideDTO> getAllMyRides(PageRequest pageRequest);
 
     Driver getcurrentDriver();
+
+    Driver updateDriverAvailability(Driver driver, Boolean b);
 
 }

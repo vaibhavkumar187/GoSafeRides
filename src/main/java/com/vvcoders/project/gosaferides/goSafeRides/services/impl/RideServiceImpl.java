@@ -4,6 +4,7 @@ import com.vvcoders.project.gosaferides.goSafeRides.dto.RideRequestDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.Driver;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.Ride;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.RideRequest;
+import com.vvcoders.project.gosaferides.goSafeRides.entities.Rider;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.RideRequestStatus;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.RideStatus;
 import com.vvcoders.project.gosaferides.goSafeRides.exceptions.ResourceNotFoundException;
@@ -32,10 +33,6 @@ public class RideServiceImpl implements RideService {
         return rideRepository.findById(rideId).orElseThrow(()-> new ResourceNotFoundException("Ride not found with id: "+rideId));
     }
 
-    @Override
-    public void matchWithDrivers(RideRequestDTO rideRequestDTO) {
-
-    }
 
     @Override
     public Ride createNewRide(RideRequest rideRequest, Driver driver) {
@@ -57,13 +54,23 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public Page<Ride> getAllRidesOfRider(Long riderId, PageRequest pageRequest) {
-        return null;
+    public Page<Ride> getAllRidesOfRider(Rider rider, PageRequest pageRequest) {
+        return rideRepository.findByRider(rider, pageRequest);
     }
 
     @Override
-    public Page<Ride> getAllRidesOfDriver(Long riderId, PageRequest pageRequest) {
-        return null;
+    public Page<Ride> getAllRidesOfDriver(Driver driver, PageRequest pageRequest) {
+        return rideRepository.findByDriver(driver, pageRequest);
+    }
+
+    @Override
+    public int getCountOfRidesForDriver(Driver currentDriver) {
+        return rideRepository.countByDriver(currentDriver);
+    }
+
+    @Override
+    public int getCountOfRidesForRider(Rider currentRider) {
+        return rideRepository.countByRider(currentRider);
     }
 
     private String generateOtp() {

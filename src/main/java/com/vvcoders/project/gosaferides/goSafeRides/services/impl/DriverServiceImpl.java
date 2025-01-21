@@ -6,12 +6,14 @@ import com.vvcoders.project.gosaferides.goSafeRides.dto.RiderDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.Driver;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.Ride;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.RideRequest;
-import com.vvcoders.project.gosaferides.goSafeRides.entities.Rider;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.RideRequestStatus;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.RideStatus;
 import com.vvcoders.project.gosaferides.goSafeRides.exceptions.ResourceNotFoundException;
 import com.vvcoders.project.gosaferides.goSafeRides.repositories.DriverRepository;
-import com.vvcoders.project.gosaferides.goSafeRides.services.*;
+import com.vvcoders.project.gosaferides.goSafeRides.services.DriverService;
+import com.vvcoders.project.gosaferides.goSafeRides.services.RatingService;
+import com.vvcoders.project.gosaferides.goSafeRides.services.RideRequestService;
+import com.vvcoders.project.gosaferides.goSafeRides.services.RideService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -20,8 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor

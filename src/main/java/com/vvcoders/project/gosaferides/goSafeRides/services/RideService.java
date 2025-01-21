@@ -1,6 +1,5 @@
 package com.vvcoders.project.gosaferides.goSafeRides.services;
 
-import com.vvcoders.project.gosaferides.goSafeRides.dto.RideRequestDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.Driver;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.Ride;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.RideRequest;

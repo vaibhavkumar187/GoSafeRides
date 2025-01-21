@@ -5,7 +5,10 @@ import com.vvcoders.project.gosaferides.goSafeRides.dto.DriverDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.RideDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.RideRequestDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.RiderDTO;
-import com.vvcoders.project.gosaferides.goSafeRides.entities.*;
+import com.vvcoders.project.gosaferides.goSafeRides.entities.Ride;
+import com.vvcoders.project.gosaferides.goSafeRides.entities.RideRequest;
+import com.vvcoders.project.gosaferides.goSafeRides.entities.Rider;
+import com.vvcoders.project.gosaferides.goSafeRides.entities.User;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.RideRequestStatus;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.RideStatus;
 import com.vvcoders.project.gosaferides.goSafeRides.exceptions.ResourceNotFoundException;
@@ -18,9 +21,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor

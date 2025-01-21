@@ -1,16 +1,19 @@
 package com.vvcoders.project.gosaferides.goSafeRides.services.impl;
 
 
-import com.vvcoders.project.gosaferides.goSafeRides.dto.*;
+import com.vvcoders.project.gosaferides.goSafeRides.dto.DriverDTO;
+import com.vvcoders.project.gosaferides.goSafeRides.dto.RideDTO;
+import com.vvcoders.project.gosaferides.goSafeRides.dto.RideRequestDTO;
+import com.vvcoders.project.gosaferides.goSafeRides.dto.RiderDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.RideRequest;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.Rider;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.User;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.RideRequestStatus;
-import com.vvcoders.project.gosaferides.goSafeRides.repositories.RideRequestRepository;
+import com.vvcoders.project.gosaferides.goSafeRides.exceptions.ResourceNotFoundException;
 import com.vvcoders.project.gosaferides.goSafeRides.repositories.RiderRepository;
+import com.vvcoders.project.gosaferides.goSafeRides.services.RideRequestService;
 import com.vvcoders.project.gosaferides.goSafeRides.services.RiderService;
-import com.vvcoders.project.gosaferides.goSafeRides.strategies.DriverMatchingStrategy;
-import com.vvcoders.project.gosaferides.goSafeRides.strategies.RideFareCalculationStrategy;
+import com.vvcoders.project.gosaferides.goSafeRides.strategies.RideStrategyManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -24,23 +27,25 @@ import java.util.List;
 public class RiderServiceImpl implements RiderService {
 
     private final ModelMapper modelMapper;
-    private final RideFareCalculationStrategy rideFareCalculationStrategy;
-    private final DriverMatchingStrategy driverMatchingStrategy;
-    private final RideRequestRepository rideRequestRepository;
+    private final RideRequestService rideRequestService;
     private final RiderRepository riderRepository;
+    private final RideStrategyManager rideStrategyManager;
 
     @Override
     public RideRequestDTO requestRide(RideRequestDTO rideRequestDTO) {
+        Rider currentRider = getCurrentRider();
 
         RideRequest rideRequest = modelMapper.map(rideRequestDTO, RideRequest.class);
         rideRequest.setRideRequestStatus(RideRequestStatus.PENDING);
 
-        Double fare = rideFareCalculationStrategy.calculateFare(rideRequest);
-        rideRequest.setFare(fare);
+        rideRequest.setRider(currentRider);
 
-        RideRequest savedRideRequest = rideRequestRepository.save(rideRequest);
+        Double fare = rideStrategyManager.rideFareCalculationStrategy().calculateFare(rideRequest);
+        rideRequest.setRideFare(fare);
 
-        driverMatchingStrategy.findMatchingDrivers(rideRequest);
+        RideRequest savedRideRequest = rideRequestService.save(rideRequest);
+
+        rideStrategyManager.driverMatchingStrategy(currentRider.getRating()).findMatchingDrivers(rideRequest);
 
         return modelMapper.map(savedRideRequest, RideRequestDTO.class);
     }
@@ -65,13 +70,16 @@ public class RiderServiceImpl implements RiderService {
     }
 
     @Override
-    public RiderDTO createRider(User user) {
+    public Rider createRider(User user) {
         Rider rider= Rider.builder()
                 .user(user)
                 .rating(0.0)
                 .build();
-        Rider savedRider= riderRepository.save(rider);
-        return modelMapper.map(savedRider, RiderDTO.class);
+        return riderRepository.save(rider);
+    }
 
+    @Override
+    public Rider getCurrentRider() {
+        return riderRepository.findById(1L).orElseThrow(()-> new ResourceNotFoundException("Rider not found with id: "+1));
     }
 }

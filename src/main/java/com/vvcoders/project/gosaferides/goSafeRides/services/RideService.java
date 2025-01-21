@@ -1,8 +1,9 @@
 package com.vvcoders.project.gosaferides.goSafeRides.services;
 
-import com.vvcoders.project.gosaferides.goSafeRides.dto.DriverDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.RideRequestDTO;
+import com.vvcoders.project.gosaferides.goSafeRides.entities.Driver;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.Ride;
+import com.vvcoders.project.gosaferides.goSafeRides.entities.RideRequest;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.RideStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,9 +14,9 @@ public interface RideService {
 
     void matchWithDrivers(RideRequestDTO rideRequestDTO);
 
-    Ride createNewRide(RideRequestDTO rideRequestDTO, DriverDTO driverDTO);
+    Ride createNewRide(RideRequest rideRequest, Driver driver);
 
-    Ride updateRideStatus(Long rideId, RideStatus rideStatus);
+    Ride updateRideStatus(Ride ride, RideStatus rideStatus);
 
     Page<Ride> getAllRidesOfRider(Long riderId, PageRequest pageRequest);
 

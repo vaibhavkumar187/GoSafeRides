@@ -28,6 +28,9 @@ public class PointDeserializer extends JsonDeserializer<Point> {
         double longitude = coordinatesNode.get(0).asDouble();
         double latitude = coordinatesNode.get(1).asDouble();
 
-        return geometryFactory.createPoint(new Coordinate(longitude, latitude));
+        Point point = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+        point.setSRID(4326);
+
+        return point;
     }
 }

@@ -1,7 +1,6 @@
 package com.vvcoders.project.gosaferides.goSafeRides.controllers;
 
 import com.vvcoders.project.gosaferides.goSafeRides.dto.RideRequestDTO;
-
 import com.vvcoders.project.gosaferides.goSafeRides.services.RiderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/rider")
+@RequestMapping("/riders")
 @RequiredArgsConstructor
 public class RiderController {
 

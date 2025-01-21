@@ -36,16 +36,5 @@ public class RideRequestDTO {
 
     private RideRequestStatus rideRequestStatus;
 
-    @Override
-    public String toString() {
-        return "RideRequestDTO{" +
-                "id=" + id +
-                ", pickupLocation=" + pickupLocation +
-                ", dropOffLocation=" + dropOffLocation +
-                ", requestedTime=" + requestedTime +
-                ", rider=" + rider +
-                ", paymentMethod=" + paymentMethod +
-                ", rideRequestStatus=" + rideRequestStatus +
-                '}';
-    }
+    private Double rideFare;
 }

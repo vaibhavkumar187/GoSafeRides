@@ -4,19 +4,16 @@ import com.vvcoders.project.gosaferides.goSafeRides.entities.RideRequest;
 import com.vvcoders.project.gosaferides.goSafeRides.services.DistanceService;
 import com.vvcoders.project.gosaferides.goSafeRides.strategies.RideFareCalculationStrategy;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@Primary
 public class RideFareDefaultFareCalculationStrategy implements RideFareCalculationStrategy {
 
     private final DistanceService distanceService;
-    private double RIDE_MULTIPLIER= 10;
 
     @Override
     public double calculateFare(RideRequest rideRequest) {
-        return distanceService.calculateDistance(rideRequest.getPickupLocation(), rideRequest.getDropOffLocation()) * RIDE_MULTIPLIER;
+        return distanceService.calculateDistance(rideRequest.getPickupLocation(), rideRequest.getDropOffLocation()) * RIDE_FARE_MULTIPLIER;
     }
 }

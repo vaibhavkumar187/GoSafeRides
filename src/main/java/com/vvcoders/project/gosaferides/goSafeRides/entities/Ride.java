@@ -38,9 +38,11 @@ public class Ride {
     private PaymentMethod paymentMethod;
 
     @Enumerated(EnumType.STRING)
-    private RideStatus rideRequestStatus;
+    private RideStatus rideStatus;
 
     private Double rideFare;
+
+    private String otp;
 
     private LocalDateTime startTime;
 

@@ -9,6 +9,7 @@ import com.vvcoders.project.gosaferides.goSafeRides.exceptions.RuntimeConflictEx
 import com.vvcoders.project.gosaferides.goSafeRides.repositories.UserRepository;
 import com.vvcoders.project.gosaferides.goSafeRides.services.AuthService;
 import com.vvcoders.project.gosaferides.goSafeRides.services.RiderService;
+import com.vvcoders.project.gosaferides.goSafeRides.services.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class AuthServiceImpl implements AuthService {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final RiderService riderService;
+    private final WalletService walletService;
 
     @Override
     public String login(String email, String password) {
@@ -46,6 +48,7 @@ public class AuthServiceImpl implements AuthService {
         riderService.createRider(savedUser);
 
         //Created the Wallet for the User
+        walletService.createNewWallet(savedUser);
 
         return modelMapper.map(savedUser, UserDTO.class);
     }

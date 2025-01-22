@@ -246,5 +246,8 @@ VALUES
 (40, true, 4.7, 40, 'DL40GHI020', ST_GeomFromText('POINT(77.1093 28.7050)', 4326)); -- Adarsh Nagar
 
 
-
+INSERT INTO wallet(id, user_id, wallet_balance)
+VALUES
+(1, 1, 300),
+(2, 2, 500);
 

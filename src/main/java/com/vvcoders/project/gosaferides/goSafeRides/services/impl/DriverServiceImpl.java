@@ -10,10 +10,7 @@ import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.RideRequestSt
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.RideStatus;
 import com.vvcoders.project.gosaferides.goSafeRides.exceptions.ResourceNotFoundException;
 import com.vvcoders.project.gosaferides.goSafeRides.repositories.DriverRepository;
-import com.vvcoders.project.gosaferides.goSafeRides.services.DriverService;
-import com.vvcoders.project.gosaferides.goSafeRides.services.RatingService;
-import com.vvcoders.project.gosaferides.goSafeRides.services.RideRequestService;
-import com.vvcoders.project.gosaferides.goSafeRides.services.RideService;
+import com.vvcoders.project.gosaferides.goSafeRides.services.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -32,6 +29,7 @@ public class DriverServiceImpl implements DriverService {
     private final RideService rideService;
     private final ModelMapper modelMapper;
     private final RatingService ratingService;
+    private final PaymentService paymentService;
 
     @Override
     @Transactional
@@ -86,12 +84,17 @@ public class DriverServiceImpl implements DriverService {
         if(!otp.equals(ride.getOtp())){
             throw new RuntimeException("Otp is not valid, otp: "+otp);
         }
+
         ride.setStartTime(LocalDateTime.now());
         Ride savedRide = rideService.updateRideStatus(ride, RideStatus.ONGOING);
+
+        paymentService.createNewPayment(savedRide);
+
         return modelMapper.map(savedRide, RideDTO.class);
     }
 
     @Override
+    @Transactional
     public RideDTO endRide(Long rideId) {
         Ride ride = rideService.getRideById(rideId);
 
@@ -106,6 +109,9 @@ public class DriverServiceImpl implements DriverService {
 
         ride.setEndTime(LocalDateTime.now());
         Ride savedRide = rideService.updateRideStatus(ride, RideStatus.ENDED);
+        updateDriverAvailability(driver, true);
+
+        paymentService.processPayment(savedRide);
         return modelMapper.map(savedRide, RideDTO.class);
     }
 

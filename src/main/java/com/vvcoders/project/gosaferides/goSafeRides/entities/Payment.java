@@ -3,8 +3,7 @@ package com.vvcoders.project.gosaferides.goSafeRides.entities;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.PaymentMethod;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.PaymentStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -12,6 +11,9 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Payment {
 
     @Id

@@ -16,6 +16,10 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(indexes = {
+        @Index(name= "idx_wallet_transaction_ride", columnList = "ride_id"),
+        @Index(name= "idx_wallet_transaction_wallet", columnList = "wallet_id")
+})
 public class WalletTransaction {
 
     @Id

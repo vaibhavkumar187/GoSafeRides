@@ -40,7 +40,7 @@ public class DriverServiceImpl implements DriverService {
             throw new RuntimeException("Ride Request cannot be accepted, status is "+ rideRequest.getRideRequestStatus());
         }
 
-        Driver currentDriver = getcurrentDriver();
+        Driver currentDriver = getCurrentDriver();
         if (!currentDriver.getAvailable()){
             throw new RuntimeException("Driver cannot accept ride due to unavailability");
         }
@@ -54,7 +54,7 @@ public class DriverServiceImpl implements DriverService {
     public RideDTO cancelRide(Long rideId) {
         Ride ride = rideService.getRideById(rideId);
 
-        Driver driver = getcurrentDriver();
+        Driver driver = getCurrentDriver();
         if(!driver.equals(ride.getDriver())){
             throw new RuntimeException("Driver mismatch so can't cancel the ride.");
         }
@@ -72,7 +72,7 @@ public class DriverServiceImpl implements DriverService {
     public RideDTO startRide(Long rideId, String otp) {
         Ride ride = rideService.getRideById(rideId);
 
-        Driver driver = getcurrentDriver();
+        Driver driver = getCurrentDriver();
         if(!driver.equals(ride.getDriver())){
             throw new RuntimeException("Driver mismatch so can't start the ride.");
         }
@@ -89,6 +89,7 @@ public class DriverServiceImpl implements DriverService {
         Ride savedRide = rideService.updateRideStatus(ride, RideStatus.ONGOING);
 
         paymentService.createNewPayment(savedRide);
+        ratingService.createNewRating(savedRide);
 
         return modelMapper.map(savedRide, RideDTO.class);
     }
@@ -98,13 +99,13 @@ public class DriverServiceImpl implements DriverService {
     public RideDTO endRide(Long rideId) {
         Ride ride = rideService.getRideById(rideId);
 
-        Driver driver = getcurrentDriver();
+        Driver driver = getCurrentDriver();
         if(!driver.equals(ride.getDriver())){
             throw new RuntimeException("Driver mismatch so can't end the ride.");
         }
 
         if(!ride.getRideStatus().equals(RideStatus.ONGOING)){
-            throw new RuntimeException("Ride have not started yet."+ride.getRideStatus());
+            throw new RuntimeException("Ride isn't started yet."+ride.getRideStatus());
         }
 
         ride.setEndTime(LocalDateTime.now());
@@ -117,25 +118,35 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public RiderDTO rateRider(Long rideId, Integer rating) {
-        return ratingService.rateRider(rideId, rating);
+        Ride ride = rideService.getRideById(rideId);
+        Driver driver = getCurrentDriver();
+
+        if(!driver.equals(ride.getDriver())){
+            throw new RuntimeException("Driver mismatch so can't rate the rider.");
+        }
+
+        if(!ride.getRideStatus().equals(RideStatus.ENDED)){
+            throw new RuntimeException("Ride isn't ended yet."+ride.getRideStatus());
+        }
+        return ratingService.rateRider(ride, rating);
     }
 
     @Override
     public DriverDTO getMyProfile() {
-        Driver currentDriver = getcurrentDriver();
+        Driver currentDriver = getCurrentDriver();
         return modelMapper.map(currentDriver, DriverDTO.class);
     }
 
     @Override
     public Page<RideDTO> getAllMyRides(PageRequest pageRequest) {
-        Driver currentDriver = getcurrentDriver();
+        Driver currentDriver = getCurrentDriver();
         return rideService.getAllRidesOfDriver(currentDriver,pageRequest).map(
                 ride -> modelMapper.map(ride, RideDTO.class)
         );
     }
 
     @Override
-    public Driver getcurrentDriver() {
+    public Driver getCurrentDriver() {
         return driverRepository.findById(2L).orElseThrow(()-> new ResourceNotFoundException("Driver is not found with id: "+2));
     }
 

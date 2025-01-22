@@ -3,66 +3,77 @@ package com.vvcoders.project.gosaferides.goSafeRides.services.impl;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.DriverDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.RiderDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.Driver;
+import com.vvcoders.project.gosaferides.goSafeRides.entities.Rating;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.Ride;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.Rider;
+import com.vvcoders.project.gosaferides.goSafeRides.exceptions.ResourceNotFoundException;
+import com.vvcoders.project.gosaferides.goSafeRides.exceptions.RuntimeConflictException;
 import com.vvcoders.project.gosaferides.goSafeRides.repositories.DriverRepository;
+import com.vvcoders.project.gosaferides.goSafeRides.repositories.RatingRepository;
 import com.vvcoders.project.gosaferides.goSafeRides.repositories.RiderRepository;
 import com.vvcoders.project.gosaferides.goSafeRides.services.RatingService;
-import com.vvcoders.project.gosaferides.goSafeRides.services.RideService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class RatingServiceImpl implements RatingService {
 
-    private final RiderRepository riderRepository;
+    private final RatingRepository ratingRepository;
     private final DriverRepository driverRepository;
-    private final RideService rideService;
+    private final RiderRepository riderRepository;
     private final ModelMapper modelMapper;
 
     @Override
-    public RiderDTO rateRider(Long rideId, Integer rating) {
-        Ride ride = rideService.getRideById(rideId);
-        Rider currentRider= ride.getRider();
-        if(Objects.isNull(currentRider)){
-            throw new RuntimeException("No rider assigned with this ride");
-        }
+    public RiderDTO rateRider(Ride ride, Integer rating) {
+        Rider rider = ride.getRider();
+        Rating ratingObj= ratingRepository.findByRide(ride)
+                .orElseThrow(()-> new ResourceNotFoundException("Rating not found for ride id: "+ ride.getId()));
 
-        double riderRating = currentRider.getRating();
-        int riderRideCount = rideService.getCountOfRidesForRider(currentRider)-1;
+        if(ratingObj.getRiderRating()!=null)
+            throw new RuntimeConflictException("Rider has already been rated!");
 
-        Rider savedRider = updateRiderRating(currentRider, riderRating, riderRideCount, rating);
-        return modelMapper.map(savedRider, RiderDTO.class);
+        ratingObj.setRiderRating(rating);
+        ratingRepository.save(ratingObj);
+
+        Double newRating= ratingRepository.findByRider(rider)
+                .stream().mapToDouble(r -> r.getRiderRating())
+                .average().orElse(0.0);
+
+        rider.setRating(newRating);
+        return modelMapper.map(riderRepository.save(rider), RiderDTO.class);
     }
 
     @Override
-    public DriverDTO rateDriver(Long rideId, Integer rating) {
-        Ride ride = rideService.getRideById(rideId);
-        Driver currentDriver= ride.getDriver();
-        if(Objects.isNull(currentDriver)){
-            throw new RuntimeException("No driver assigned with this ride");
-        }
+    public DriverDTO rateDriver(Ride ride, Integer rating) {
+        Driver driver= ride.getDriver();
+        Rating ratingObj= ratingRepository.findByRide(ride)
+                .orElseThrow(()-> new ResourceNotFoundException("Rating not found for ride id: "+ ride.getId()));
 
-        double driverRating = currentDriver.getRating();
-        int driverRideCount = rideService.getCountOfRidesForDriver(currentDriver)-1;
+        if(ratingObj.getDriverRating()!=null)
+            throw new RuntimeConflictException("Driver has already been rated!");
 
-        Driver savedDriver = updateDriverRating(currentDriver, driverRating, driverRideCount, rating);
-        return modelMapper.map(savedDriver, DriverDTO.class);
+        ratingObj.setDriverRating(rating);
+        ratingRepository.save(ratingObj);
+
+        Double newRating= ratingRepository.findByDriver(driver)
+                .stream().mapToDouble(r -> r.getDriverRating())
+                .average().orElse(0.0);
+
+        driver.setRating(newRating);
+        return modelMapper.map(driverRepository.save(driver), DriverDTO.class);
     }
 
-    public Driver updateDriverRating(Driver driver, Double allTimeRating, Integer noOfRides, Integer currentRating) {
-        double driverNewRating = (allTimeRating*noOfRides+currentRating)/(noOfRides+1);
-        driver.setRating(driverNewRating);
-        return driverRepository.save(driver);
-    }
+    @Override
+    public void createNewRating(Ride ride) {
 
-    public Rider updateRiderRating(Rider rider, Double allTimeRating, Integer noOfRides, Integer currentRating) {
-        double riderNewRating = (allTimeRating*noOfRides+currentRating)/(noOfRides+1);
-        rider.setRating(riderNewRating);
-        return riderRepository.save(rider);
+        Rating rating = Rating.builder()
+                .rider(ride.getRider())
+                .driver(ride.getDriver())
+                .ride(ride)
+                .build();
+
+        ratingRepository.save(rating);
     }
 }

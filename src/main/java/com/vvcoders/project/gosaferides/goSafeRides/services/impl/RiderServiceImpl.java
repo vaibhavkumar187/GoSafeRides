@@ -5,10 +5,7 @@ import com.vvcoders.project.gosaferides.goSafeRides.dto.DriverDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.RideDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.RideRequestDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.RiderDTO;
-import com.vvcoders.project.gosaferides.goSafeRides.entities.Ride;
-import com.vvcoders.project.gosaferides.goSafeRides.entities.RideRequest;
-import com.vvcoders.project.gosaferides.goSafeRides.entities.Rider;
-import com.vvcoders.project.gosaferides.goSafeRides.entities.User;
+import com.vvcoders.project.gosaferides.goSafeRides.entities.*;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.RideRequestStatus;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.enums.RideStatus;
 import com.vvcoders.project.gosaferides.goSafeRides.exceptions.ResourceNotFoundException;
@@ -73,7 +70,18 @@ public class RiderServiceImpl implements RiderService {
 
     @Override
     public DriverDTO rateDriver(Long rideId, Integer rating) {
-        return ratingService.rateDriver(rideId, rating);
+        Ride ride = rideService.getRideById(rideId);
+        Rider rider= getCurrentRider();
+
+        if(!rider.equals(ride.getRider())){
+            throw new RuntimeException("Rider mismatch so can't rate the driver.");
+        }
+
+        if(!ride.getRideStatus().equals(RideStatus.ENDED)){
+            throw new RuntimeException("Ride isn't ended yet."+ride.getRideStatus());
+        }
+
+        return ratingService.rateDriver(ride, rating);
     }
 
     @Override

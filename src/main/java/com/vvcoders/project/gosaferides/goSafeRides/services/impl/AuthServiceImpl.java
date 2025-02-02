@@ -1,6 +1,7 @@
 package com.vvcoders.project.gosaferides.goSafeRides.services.impl;
 
 import com.vvcoders.project.gosaferides.goSafeRides.dto.DriverDTO;
+import com.vvcoders.project.gosaferides.goSafeRides.dto.LoginResponseDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.SignUpDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.dto.UserDTO;
 import com.vvcoders.project.gosaferides.goSafeRides.entities.Driver;
@@ -10,10 +11,7 @@ import com.vvcoders.project.gosaferides.goSafeRides.exceptions.ResourceNotFoundE
 import com.vvcoders.project.gosaferides.goSafeRides.exceptions.RuntimeConflictException;
 import com.vvcoders.project.gosaferides.goSafeRides.repositories.UserRepository;
 import com.vvcoders.project.gosaferides.goSafeRides.security.JwtService;
-import com.vvcoders.project.gosaferides.goSafeRides.services.AuthService;
-import com.vvcoders.project.gosaferides.goSafeRides.services.DriverService;
-import com.vvcoders.project.gosaferides.goSafeRides.services.RiderService;
-import com.vvcoders.project.gosaferides.goSafeRides.services.WalletService;
+import com.vvcoders.project.gosaferides.goSafeRides.services.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -90,5 +88,14 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
 
         return modelMapper.map(driverService.createNewDriver(createDriver), DriverDTO.class);
+    }
+
+    @Override
+    public LoginResponseDTO refreshToken(String refreshToken) {
+        Long userId= jwtService.getUserIdFromToken(refreshToken);
+        User user = userRepository.findById(userId).orElseThrow(
+                ()-> new ResourceNotFoundException("User not found with user id: "+userId));
+        String accessToken =jwtService.generateAccessToken(user);
+        return new LoginResponseDTO(accessToken);
     }
 }
